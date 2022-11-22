@@ -1331,6 +1331,7 @@ Chest:CreateToggle({ -- IMPORTANT: This function does not return anything, pleas
             Common()
         elseif state == false then
             game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Common.ElectricPPPGUI:Remove()
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Common.Highlight:Remove()
         end
     end;
 })
@@ -1381,20 +1382,6 @@ Misc:CreateButton({
         local a=getrenv()._G.hitbox.start;getrenv()._G.hitbox.start=function(...)local b={...}b[3]=Vector3.new(30,30,30)return a(unpack(b))end -- Hitbox
     end
 })   
-
-Misc:CreateButton({
-    Name = "No Drown"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="swim"then return nil end;return a(...)end) -- Swi
-    end
-})
-
-Misc:CreateButton({
-    Name = "No Drown"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="swim"then return nil end;return a(...)end) -- Swi
-    end
-})
 
 Misc:CreateButton({
     Name = "Dash No Stamina"; -- required: name of element
