@@ -581,7 +581,7 @@ local ESP = {
     Tracers = false,
     Objects = setmetatable({}, {__mode="kv"}),
     Overrides = {},
-    MaxShownDistance = 40000,
+    MaxShownDistance = 5000,
  
 }
  
@@ -1278,30 +1278,60 @@ local Chest = MyPage2:CreateSection("Chests")
 Chest:CreateButton({
     Name = "Rare Chest ESP"; -- required: name of element
     Callback = function() -- required: function to be called when button is pressed
-        if getgenv().Loaded223 == true then
-            UI:Notify({
-                Title = "Kraken Services";
-                Content = "Already Loaded Speed.";
-              })
-            return
+        for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
+            if v.Name == "Rare" then
+              local a = Instance.new("BillboardGui",v) -- pretty much explains everything
+              a.Name = "ElectricPPPGUI"
+              a.Size = UDim2.new(10,0, 10,0)
+              a.AlwaysOnTop = true
+              local b = Instance.new("Frame",a)
+              b.Size = UDim2.new(1,0, 1,0)
+              b.BackgroundTransparency = 1
+              b.BorderSizePixel = 0
+              b.BackgroundColor3 = Color3.new(0, 255, 0)
+              local c = Instance.new('TextLabel',b)
+              c.Size = UDim2.new(2,0,2,0)
+              c.BorderSizePixel = 0
+              c.TextSize = 10
+              c.TextColor3 = Color3.fromRGB(255,255,255)
+              c.Text = "Rare Chest"
+              c.BackgroundTransparency = 1
+              c.Font = "Ubuntu"
+              local d = Instance.new("Highlight", v)
+              d.FillColor = Color3.fromRGB(0, 125, 198)
+              d.OutlineColor = Color3.fromRGB(0, 162, 255)
+            end
         end
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Stellsor/Chest-/main/Rare",true))()
-        getgenv().Loaded223 = true
     end
 })
 
 Chest:CreateButton({
     Name = "Legendary Chest ESP"; -- required: name of element
     Callback = function() -- required: function to be called when button is pressed
-        if getgenv().Loaded223 == true then
-            UI:Notify({
-                Title = "Kraken Services";
-                Content = "Already Loaded Speed.";
-              })
-            return
+        for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
+            if v.Name == "Legendary" then
+              local a = Instance.new("BillboardGui",v) -- pretty much explains everything
+              a.Name = "ElectricPPPGUI"
+              a.Size = UDim2.new(10,0, 10,0)
+              a.AlwaysOnTop = true
+              local b = Instance.new("Frame",a)
+              b.Size = UDim2.new(1,0, 1,0)
+              b.BackgroundTransparency = 1
+              b.BorderSizePixel = 0
+              b.BackgroundColor3 = Color3.new(0, 255, 0)
+              local c = Instance.new('TextLabel',b)
+              c.Size = UDim2.new(2,0,2,0)
+              c.BorderSizePixel = 0
+              c.TextSize = 10
+              c.TextColor3 = Color3.fromRGB(255,255,255)
+              c.Text = "Legendary Chest"
+              c.BackgroundTransparency = 1
+              c.Font = "Ubuntu"
+              local d = Instance.new("Highlight", v)
+              d.FillColor = Color3.fromRGB(225, 225, 0)
+              d.OutlineColor = Color3.fromRGB(255, 255, 0)
+            end
         end
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Stellsor/Chest-/main/Legend",true))()
-        getgenv().Loaded2233 = true
     end
 })
 
