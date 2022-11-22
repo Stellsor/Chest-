@@ -1,3 +1,32 @@
+function Common()
+    for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
+        if v.Name == "Common" then
+          local a = Instance.new("BillboardGui",v) -- pretty much explains everything
+          a.Name = "ElectricPPPGUI"
+          a.Size = UDim2.new(10,0, 10,0)
+          a.AlwaysOnTop = true
+          local b = Instance.new("Frame",a)
+          b.Size = UDim2.new(1,0, 1,0)
+          b.BackgroundTransparency = 1
+          b.BorderSizePixel = 0
+          b.BackgroundColor3 = Color3.new(0, 255, 0)
+          local c = Instance.new('TextLabel',b)
+          c.Size = UDim2.new(2,0,2,0)
+          c.BorderSizePixel = 0
+          c.TextSize = 10
+          c.TextColor3 = Color3.fromRGB(255,255,255)
+          c.Text = "Common Chest"
+          c.BackgroundTransparency = 1
+          c.Font = "Ubuntu"
+          local d = Instance.new("Highlight", v)
+          d.FillColor = Color3.fromRGB(225, 225, 255)
+          d.OutlineColor = Color3.fromRGB(255, 255, 255)
+        end
+    end
+end
+
+
+
 function functions()
     function CFRAME()
         repeat
@@ -1139,48 +1168,6 @@ Speed:CreateSlider({ -- IMPORTANT: This function does not return anything, pleas
 })
 
 
-local JumpPower = MyPage:CreateSection("Jump Power")
-
-JumpPower:CreateButton({
-    Name = "Jump Power"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        if getgenv().Loaded2 == true then
-            UI:Notify({
-                Title = "Kraken Services";
-                Content = "Already Loaded Jump Power.";
-              })
-            return
-        end
-        getgenv().Loaded2 = true
-
-        local lp = game.Players.LocalPlayer
- 
-        game:GetService('UserInputService').InputBegan:Connect(function(input)
-           if input.KeyCode == Enum.KeyCode.Space then
-               local root = lp.Character and lp.Character:FindFirstChild('HumanoidRootPart')
-               local hum = root and lp.Character:FindFirstChild('Humanoid')
-     
-               if hum and hum.FloorMaterial ~= Enum.Material.Air then
-                   root.Velocity = Vector3.new(0, shared.power, 0)
-               end
-           end
-        end)
-    end
-})
-
-JumpPower:CreateSlider({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "Jump Power Height"; -- required: name of element
-    Flag = "Jump Height"; -- required: unique flag name to use
-    Min = 50; -- required: slider minimum drag
-    Max = 90; -- required: slider maximum drag (Max>Min or else script will error)
-    Digits = 1; -- optional: digits for rounding when dragging or entering values, default is 0 (whole numbers)
-    Default = 50; -- optional: default value for slider, will be used if config saving is disabled and there is no saved data, will be the Min value if left nil
-    Callback = function(value) -- optional: function that will be called whenever slider flag is changed
-        shared.power = value
-    end;
-})
-
-
 local Misc = MyPage:CreateSection("Misc")
 
 Misc:CreateButton({
@@ -1335,6 +1322,91 @@ Chest:CreateButton({
     end
 })
 
+Chest:CreateToggle({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
+    Name = "Common Chest"; -- required: name of element
+    Flag = "Common"; -- required: unique flag name to use
+    Default = false; -- optional: default value for toggle, will be used if config saving is disabled and there is no saved data, will be false if left nil
+    Callback = function(state) -- optional: function that will be called when toggled, it is reccomended to modify flags directly
+        if state == true then
+            Common()
+        elseif state == false then
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Common.ElectricPPPGUI:Remove()
+        end
+    end;
+})
+
+
+
+local MyPage3 = UI:CreatePage("Misc-Stuff")
+
+local Misc = MyPage2:CreateSection("Misc")
+
+Misc:CreateButton({
+    Name = "No Stun"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+       while true do
+        if game.Players.LocalPlayer.Character:WaitForChild("Stun") then
+            game.Players.LocalPlayer.Character.Stun:Remove()
+            wait(.1)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2, 10)
+        end
+    end
+    end
+})
+
+Misc:CreateButton({
+    Name = "No Drown"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        game:GetService "RunService".RenderStepped:Connect(
+            function()
+                if game.Players.LocalPlayer.Character.HumanoidRootPart:WaitForChild("SwimPosition") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.SwimPosition.Position = Vector3.new(0, -2.71834, 0)
+                end
+            end
+        )
+    end
+})   
+
+Misc:CreateButton({
+    Name = "No Fall Damage"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        if game.Players.LocalPlayer.Character:WaitForChild("FallDamage")then game.Players.LocalPlayer.Character.FallDamage:Remove()end -- No Fall Damage
+    end
+})
+
+Misc:CreateButton({
+    Name = "Hitbox Expander"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        local a=getrenv()._G.hitbox.start;getrenv()._G.hitbox.start=function(...)local b={...}b[3]=Vector3.new(30,30,30)return a(unpack(b))end -- Hitbox
+    end
+})   
+
+Misc:CreateButton({
+    Name = "No Drown"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="swim"then return nil end;return a(...)end) -- Swi
+    end
+})
+
+Misc:CreateButton({
+    Name = "No Drown"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="swim"then return nil end;return a(...)end) -- Swi
+    end
+})
+
+Misc:CreateButton({
+    Name = "Dash No Stamina"; -- required: name of element
+    Callback = function() -- required: function to be called when button is pressed
+        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="takestam"then return nil end;return a(...)end) -- Stamina
+    end
+})
+
+
+
+
+
 
 
 
@@ -1383,12 +1455,3 @@ sound.Parent = workspace
 sound:Play()
 wait(6)
 sound:Remove()
-
-
-
-
-local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="takestam"then return nil end;return a(...)end) -- Stamina
-local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="swim"then return nil end;return a(...)end) -- Swim
-local a=getrenv()._G.hitbox.start;getrenv()._G.hitbox.start=function(...)local b={...}b[3]=Vector3.new(30,30,30)return a(unpack(b))end -- Hitbox
-if game.Players.LocalPlayer.Character:WaitForChild("FallDamage")then game.Players.LocalPlayer.Character.FallDamage:Remove()end -- No Fall Damage
-game:GetService"RunService".RenderStepped:Connect(function()if game.Players.LocalPlayer.Character.HumanoidRootPart:WaitForChild("SwimPosition")then game.Players.LocalPlayer.Character.HumanoidRootPart.SwimPosition.Position=Vector3.new(0,-2.71834,0)end;if game.Players.LocalPlayer.Character:WaitForChild("Stun")then game.Players.LocalPlayer.Character.Stun:Remove()wait(.1)game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame*CFrame.new(0,2,10)end end) -- No Drown / No Stun
