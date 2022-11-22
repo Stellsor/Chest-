@@ -1339,7 +1339,7 @@ Chest:CreateToggle({ -- IMPORTANT: This function does not return anything, pleas
 
 local MyPage3 = UI:CreatePage("Misc-Stuff")
 
-local Misc = MyPage2:CreateSection("Misc")
+local Misc = MyPage3:CreateSection("Misc")
 
 Misc:CreateButton({
     Name = "No Stun"; -- required: name of element
