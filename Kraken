@@ -1,1089 +1,198 @@
-function Common()
-    for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
-        if v.Name == "Common" then
-          local a = Instance.new("BillboardGui",v) -- pretty much explains everything
-          a.Name = "ElectricPPPGUI"
-          a.Size = UDim2.new(10,0, 10,0)
-          a.AlwaysOnTop = true
-          local b = Instance.new("Frame",a)
-          b.Size = UDim2.new(1,0, 1,0)
-          b.BackgroundTransparency = 1
-          b.BorderSizePixel = 0
-          b.BackgroundColor3 = Color3.new(0, 255, 0)
-          local c = Instance.new('TextLabel',b)
-          c.Size = UDim2.new(2,0,2,0)
-          c.BorderSizePixel = 0
-          c.TextSize = 10
-          c.TextColor3 = Color3.fromRGB(255,255,255)
-          c.Text = "Common Chest"
-          c.BackgroundTransparency = 1
-          c.Font = "Ubuntu"
-          local d = Instance.new("Highlight", v)
-          d.FillColor = Color3.fromRGB(225, 225, 255)
-          d.OutlineColor = Color3.fromRGB(255, 255, 255)
-        end
-    end
-end
 
 
 
-function functions()
-    function CFRAME()
-        repeat
-            wait()
-        until game:IsLoaded()
-        local L_134_ = game:service('Players')
-        local L_135_ = L_134_.LocalPlayer
-        repeat
-            wait()
-        until L_135_.Character
-        local L_136_ = game:service('UserInputService')
-        local L_137_ = game:service('RunService')
-        local L_138_ = false
-        local L_139_
-        L_136_.InputBegan:connect(function(L_140_arg0)
-            if L_140_arg0.KeyCode == Enum.KeyCode.T then
-                L_138_ = not L_138_
-                if L_138_ == true then
-                    repeat
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + game.Players.LocalPlayer.Character.Humanoid.MoveDirection * Multiplier
-                        game:GetService("RunService").Stepped:wait()
-                    until L_138_ == false
-                end
-            end
-        end)
-    end
+
+function FLY()
+    local User = game:GetService("UserInputService")
+    local player = game:GetService("Players").LocalPlayer
+    local GuiService = game:GetService("StarterGui")
+    local mouse = game.Players.LocalPlayer:GetMouse()
     
+    local holdingWKey = false
+    local holdingSKey = false
+    local holdingAKey = false
+    local holdingDKey = false
+    local holdingSpaceKey = false
+    local holdingControlKey = false
     
+    Speed_1 = -0.35
     
-    
-    
-    
-    
-    
-    function JumpPower()
-        local lp = game.Players.LocalPlayer
-        
-        game:GetService('UserInputService').InputBegan:Connect(function(input)
-           if input.KeyCode == Enum.KeyCode.Space then
-               local root = lp.Character and lp.Character:FindFirstChild('HumanoidRootPart')
-               local hum = root and lp.Character:FindFirstChild('Humanoid')
-        
-               if hum and hum.FloorMaterial ~= Enum.Material.Air then
-                   root.Velocity = Vector3.new(0, shared.power, 0)
+    mouse.KeyDown:connect(function(key)
+       if key == "x" then
+           if startup  == true then
+               startup = false
+               GuiService:SetCore("SendNotification", {Title = "Speed", Text = "Speed is now disabled";})
+           else
+               startup = true
+               GuiService:SetCore("SendNotification", {Title = "Speed", Text = "Speed is now enabled";})
+               
+               local brick = Instance.new("Part", workspace)
+               brick.Size = Vector3.new(3, 2, 3)
+               brick.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(0, -5, 0)
+               brick.Transparency = 1
+               brick.Anchored = true
+               brick.Name = "Brick"
+               mouse.KeyDown:connect(function(key)
+                   if key == "x" then
+                       brick:remove()
+                   end
+               end)
+               for i = 1, math.huge do
+                   brick.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(0, -4, 0)
+                   wait(0)
                end
            end
-        end)
-    end
-    
-    
-    function ESP()
-    --Settings--
-    local ESP = {
-        TextColor = Color3.fromRGB(255,255,255),
-        EquippedColor = Color3.fromRGB(255,255,255),
-        DistanceColor = Color3.fromRGB(255,255,255),
-        TracerColor = Color3.fromRGB(255,255,255),
-        LowerHealthColor = Color3.fromRGB(0,0,0),
-        HigherHealthColor = Color3.fromRGB(133, 87, 242),
-        Color = Color3.fromRGB(255,255,255),
-        HealthBar = true,
-        Enabled = true,
-        Distance = true,
-        Health = true,
-        Equipped = true,
-        Boxes = true,
-        BoxShift = CFrame.new(0,-.3,0),
-        BoxSize = Vector3.new(4,8,0),
-        FaceCamera = true,
-        Names = true,
-        TeamColor = true,
-        Thickness = 0.8,
-        AttachShift = 1,
-        TeamMates = true,
-        Players = true,
-        Tracers = false,
-        Objects = setmetatable({}, {__mode="kv"}),
-        Overrides = {},
-        MaxShownDistance = 40000,
-    
-    }
-    
-    --Declarations--
-    local cam = workspace.CurrentCamera
-    local plrs = game:GetService("Players")
-    local plr = plrs.LocalPlayer
-    local mouse = plr:GetMouse()
-    
-    local V3new = Vector3.new
-    local WorldToViewportPoint = cam.WorldToViewportPoint
-    
-    --Functions--
-    local function Draw(obj, props)
-        local new = Drawing.new(obj)
-        
-        props = props or {}
-        for i,v in pairs(props) do
-            new[i] = v
-        end
-        return new
-    end
-    
-    function ESP:GetTeam(p)
-        local ov = self.Overrides.GetTeam
-        if ov then
-            return ov(p)
-        end
-        
-        return p and p.Team
-    end
-    
-    function ESP:IsTeamMate(p)
-        local ov = self.Overrides.IsTeamMate
-        if ov then
-            return ov(p)
-        end
-        
-        return self:GetTeam(p) == self:GetTeam(plr)
-    end
-    
-    function ESP:GetColor(obj)
-        local ov = self.Overrides.GetColor
-        if ov then
-            return ov(obj)
-        end
-        local p = self:GetPlrFromChar(obj)
-        return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
-    end
-    
-    function ESP:GetPlrFromChar(char)
-        local ov = self.Overrides.GetPlrFromChar
-        if ov then
-            return ov(char)
-        end
-        
-        return plrs:GetPlayerFromCharacter(char)
-    end
-    
-    function ESP:Toggle(bool)
-        self.Enabled = bool
-        if not bool then
-            for i,v in pairs(self.Objects) do
-                if v.Type == "Box" then --fov circle etc
-                    if v.Temporary then
-                        v:Remove()
-                    else
-                        for i,v in pairs(v.Components) do
-                            v.Visible = false
-                        end
-                    end
-                end
-            end
-        end
-    end
-    
-    function ESP:GetBox(obj)
-        return self.Objects[obj]
-    end
-    
-    function ESP:AddObjectListener(parent, options)
-        local function NewListener(c)
-            if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
-                if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
-                    if not options.Validator or options.Validator(c) then
-                        local box = ESP:Add(c, {
-                            PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
-                            Color = type(options.Color) == "function" and options.Color(c) or options.Color,
-                            ColorDynamic = options.ColorDynamic,
-                            Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
-                            IsEnabled = options.IsEnabled,
-                            RenderInNil = options.RenderInNil
-                        })
-                        --TODO: add a better way of passing options
-                        if options.OnAdded then
-                            coroutine.wrap(options.OnAdded)(box)
-                        end
-                    end
-                end
-            end
-        end
-    
-        if options.Recursive then
-            parent.DescendantAdded:Connect(NewListener)
-            for i,v in pairs(parent:GetDescendants()) do
-                coroutine.wrap(NewListener)(v)
-            end
-        else
-            parent.ChildAdded:Connect(NewListener)
-            for i,v in pairs(parent:GetChildren()) do
-                coroutine.wrap(NewListener)(v)
-            end
-        end
-    end
-    
-    local boxBase = {}
-    boxBase.__index = boxBase
-    
-    function boxBase:Remove()
-        ESP.Objects[self.Object] = nil
-        for i,v in pairs(self.Components) do
-            v.Visible = false
-            v:Remove()
-            self.Components[i] = nil
-        end
-    end
-    
-    function boxBase:Update()
-        if not self.PrimaryPart then
-            --warn("not supposed to print", self.Object)
-            return self:Remove()
-        end
-    
-        local color
-        if ESP.Highlighted == self.Object then
-           color = ESP.HighlightColor
-        else
-            color = self.Color or self.ColorDynamic and self:ColorDynamic() or ESP:GetColor(self.Object) or ESP.Color
-        end
-    
-        local allow = true
-        if ESP.Overrides.UpdateAllow and not ESP.Overrides.UpdateAllow(self) then
-            allow = false
-        end
-        if self.Player and not ESP.TeamMates and ESP:IsTeamMate(self.Player) then
-            allow = false
-        end
-        if self.Player and not ESP.Players then
-            allow = false
-        end
-        if self.IsEnabled and (type(self.IsEnabled) == "string" and not ESP[self.IsEnabled] or type(self.IsEnabled) == "function" and not self:IsEnabled()) then
-            allow = false
-        end
-        if not workspace:IsAncestorOf(self.PrimaryPart) and not self.RenderInNil then
-            allow = false
-        end
-    
-        if not allow then
-            for i,v in pairs(self.Components) do
-                v.Visible = false
-            end
-            return
-        end
-    
-        if ESP.Highlighted == self.Object then
-            color = ESP.HighlightColor
-        end
-    
-        --calculations--
-        local cf = self.PrimaryPart.CFrame
-        if ESP.FaceCamera then
-            cf = CFrame.new(cf.p, cam.CFrame.p)
-        end
-        local size = self.Size
-        local locs = {
-            TopLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,size.Y/2,0),
-            TopRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,size.Y/2,0),
-            BottomLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,-size.Y/2,0),
-            BottomRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,-size.Y/2,0),
-            LegPos = cf* ESP.BoxShift * CFrame.new(size.X/75,-size.Y/2,0),
-            TagPos = cf * ESP.BoxShift * CFrame.new(0,size.Y/2,0),
-            Torso = cf * ESP.BoxShift
-        }
-        
-        local Offset = 20
-        local BottomOffset = 0 
-        local TopLeft, Vis1 = cam:WorldToViewportPoint(locs.TopLeft.p)
-        local TopRight, Vis2 = WorldToViewportPoint(cam, locs.TopRight.p)
-        local BottomLeft, Vis3 = WorldToViewportPoint(cam, locs.BottomLeft.p)
-        local BottomRight, Vis4 = WorldToViewportPoint(cam, locs.BottomRight.p)
-        local LegPos = cam:WorldToViewportPoint(locs.LegPos.p)
-        local Distance = (self.PrimaryPart.Position - plrs.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-    
-        if ESP.Boxes and game.Players:FindFirstChild(self.PrimaryPart.Parent.Name) ~= nil and Distance <= ESP.MaxShownDistance then
-            if self.Components.Quad then
-                if Vis1 or Vis2 or Vis3 or Vis4 then
-                    self.Components.Quad.Visible = true
-                    self.Components.Quad.PointA = Vector2.new(TopRight.X, TopRight.Y)
-                    self.Components.Quad.PointB = Vector2.new(TopLeft.X, TopLeft.Y)
-                    self.Components.Quad.PointC = Vector2.new(BottomLeft.X, BottomLeft.Y)
-                    self.Components.Quad.PointD = Vector2.new(BottomRight.X, BottomRight.Y)
-                    self.Components.Quad.Color = color
-                    
-                    self.Components.OutlineQuad.Visible = true
-                    self.Components.OutlineQuad.PointA = Vector2.new(TopRight.X, TopRight.Y)
-                    self.Components.OutlineQuad.PointB = Vector2.new(TopLeft.X, TopLeft.Y)
-                    self.Components.OutlineQuad.PointC = Vector2.new(BottomLeft.X, BottomLeft.Y)
-                    self.Components.OutlineQuad.PointD = Vector2.new(BottomRight.X, BottomRight.Y)
-                else
-                    self.Components.Quad.Visible = false
-                    self.Components.OutlineQuad.Visible = false
-                end
-            end
-        else
-            self.Components.Quad.Visible = false
-            self.Components.OutlineQuad.Visible = false
-        end
-    
-        if ESP.HealthBar and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) then
-            local pos, onscreen = cam:WorldToViewportPoint(self.PrimaryPart.Parent.HumanoidRootPart.Position)
-    
-            if onscreen then
-                local Humanoid = self.PrimaryPart.Parent.Humanoid
-                
-                self.Components.HealthbarOutline.Visible = true 
-                self.Components.HealthbarOutline.From = Vector2.new(BottomLeft.X-6,BottomLeft.Y+1)
-                self.Components.HealthbarOutline.To = Vector2.new(TopLeft.X-6,TopLeft.Y-2)
-                
-                self.Components.Healthbar.Visible = true 
-                self.Components.Healthbar.From = Vector2.new(BottomLeft.X-5 ,BottomLeft.Y)
-                self.Components.Healthbar.Color = ESP.LowerHealthColor:lerp(ESP.HigherHealthColor, Humanoid.Health/Humanoid.MaxHealth)
-                self.Components.Healthbar.To = Vector2.new(TopLeft.X-5,TopLeft.Y-1)
-                
-                else
-                    self.Components.Healthbar.Visible = false 
-                    self.Components.HealthbarOutline.Visible = false 
-                    
-            end
-            else
-                self.Components.Healthbar.Visible = false 
-                self.Components.HealthbarOutline.Visible = false 
-        end
-    
-        if ESP.Equipped  and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(self.PrimaryPart.Parent.Name) ~= nil then 
-            local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-            local Char = self.PrimaryPart.Parent
-            
-            if Vis5 then
-                self.Components.EquippedTool.Color = ESP.EquippedColor
-                self.Components.EquippedTool.Visible = true
-                self.Components.EquippedTool.Position = Vector2.new(LegPos.X,LegPos.Y + BottomOffset)
-                if Char:FindFirstChildOfClass("Tool") then 
-                    self.Components.EquippedTool.Text = tostring(Char:FindFirstChildOfClass("Tool"))
-                     BottomOffset = BottomOffset + 14
-                    else
-                        self.Components.EquippedTool.Text = ""
-                end
-            else
-                self.Components.EquippedTool.Visible = false
-            end
-        else
-            self.Components.EquippedTool.Visible = false
-        end
-        
-        if ESP.Distance  and Distance <= ESP.MaxShownDistance then 
-                local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-                
-                if Vis5 then
-                    self.Components.Distance.Visible = true
-                    if plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) ~= nil  then 
-                        self.Components.Distance.Position = Vector2.new(LegPos.X, LegPos.Y + BottomOffset)
-                        BottomOffset = BottomOffset + 14
-                    elseif  plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) == nil then 
-                        self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y - Offset)
-                        Offset = Offset + 14
-                    end
-                    self.Components.Distance.Text = math.floor((cam.CFrame.p - cf.p).magnitude) .." studs"
-                    self.Components.Distance.Color = ESP.DistanceColor
-                else
-                    self.Components.Distance.Visible = false
-                end
-            else
-                self.Components.Distance.Visible = false
-        end
-        
-        if ESP.Names  and Distance <= ESP.MaxShownDistance then
-            local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-            
-            if Vis5 then
-                self.Components.Name.Visible = true
-                self.Components.Name.Position = Vector2.new(TagPos.X,TagPos.Y - Offset)
-                self.Components.Name.Text = self.Name
-                self.Components.Name.Color = ESP.TextColor
-                Offset = Offset+10
-            else
-                self.Components.Name.Visible = false
-            end
-        else
-            self.Components.Name.Visible = false
-        end
-        
-        if ESP.Tracers and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(tostring(self.PrimaryPart.Parent))  then
-            local TorsoPos, Vis6 = WorldToViewportPoint(cam, locs.Torso.p)
-    
-            if Vis6 then
-                self.Components.Tracer.Visible = true
-                self.Components.Tracer.From = Vector2.new(TorsoPos.X,TorsoPos.Y)
-                self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2,cam.ViewportSize.Y/ESP.AttachShift)
-                self.Components.Tracer.Color = ESP.TracerColor
-            else
-                self.Components.Tracer.Visible = false
-            end
-        else
-            self.Components.Tracer.Visible = false
-        end
-    end
-    
-    function ESP:Add(obj, options)
-        if not obj.Parent and not options.RenderInNil then
-            return warn(obj, "has no parent")
-        end
-    
-        local box = setmetatable({
-            Name = options.Name or obj.Name,
-            Type = "Box",
-            Color = options.Color,--[[or self:GetColor(obj)]]
-            Size = options.Size or self.BoxSize,
-            Object = obj,
-            Player = options.Player or plrs:GetPlayerFromCharacter(obj),
-            PrimaryPart = options.PrimaryPart or obj.ClassName == "Model" and (obj.PrimaryPart or obj:FindFirstChild("HumanoidRootPart") or obj:FindFirstChildWhichIsA("BasePart")) or obj:IsA("BasePart") and obj,
-            Components = {},
-            IsEnabled = options.IsEnabled,
-            Temporary = options.Temporary,
-            ColorDynamic = options.ColorDynamic,
-            RenderInNil = options.RenderInNil
-        }, boxBase)
-    
-        if self:GetBox(obj) then
-            self:GetBox(obj):Remove()
-        end
-        
-        
-        box.Components["OutlineQuad"] = Draw("Quad", {
-            Thickness = self.Thickness + 2,
-            Color = Color3.fromRGB(0,0,0),
-            Transparency = 1,
-            Filled = false,
-            Visible = self.Enabled and self.Boxes
-        })
-    
-        box.Components["Quad"] = Draw("Quad", {
-            Thickness = self.Thickness,
-            Color = color,
-            Transparency = 1,
-            Filled = false,
-            Visible = self.Enabled and self.Boxes
-        })
-        box.Components["Name"] = Draw("Text", {
-            Text = box.Name,
-            Color = ESP.TextColor,
-            Center = true,
-            Outline = true,
-            Size = 14,
-            Visible = self.Enabled and self.Names
-        })
-        box.Components["Distance"] = Draw("Text", {
-            Color = ESP.DistanceColor,
-            Center = true,
-            Outline = true,
-            Size = 14,
-            Visible = self.Enabled and self.Distance
-        })
-        
-        box.Components["EquippedTool"] = Draw("Text", {
-            Color = ESP.EquippedColor,
-            Center = true,
-            Outline = true,
-            Size = 14,
-            Visible = self.Enabled and self.Equipped
-        })
-        
-        
-        box.Components["Tracer"] = Draw("Line", {
-            Thickness = ESP.Thickness,
-            Color = box.Color,
-            Transparency = 1,
-            Visible = self.Enabled and self.Tracers
-        })
-    
-        box.Components["HealthbarOutline"] = Draw('Line',{
-            Thickness = 3 ,
-            Color = Color3.new(0,0,0),
-            Transparency = 1,
-            Visible = self.Enabled and self.HealthBar,
-        })
-    
-        box.Components["Healthbar"] = Draw('Line',{
-            Thickness = 3,
-            Color = Color3.new(0,1,0),
-            Transparency = 1,
-            Visible = self.Enabled and self.HealthBar,
-        })
-        self.Objects[obj] = box
-        
-        obj.AncestryChanged:Connect(function(_, parent)
-            if parent == nil and ESP.AutoRemove ~= false then
-                box:Remove()
-            end
-        end)
-        obj:GetPropertyChangedSignal("Parent"):Connect(function()
-            if obj.Parent == nil and ESP.AutoRemove ~= false then
-                box:Remove()
-            end
-        end)
-    
-        local hum = obj:FindFirstChildOfClass("Humanoid")
-        if hum then
-            hum.Died:Connect(function()
-                if ESP.AutoRemove ~= false then
-                    box:Remove()
-                end
-            end)
-        end
-    
-        return box
-    end
-    
-    local function CharAdded(char)
-        local p = plrs:GetPlayerFromCharacter(char)
-        if not char:FindFirstChild("HumanoidRootPart") then
-            local ev
-            ev = char.ChildAdded:Connect(function(c)
-                if c.Name == "HumanoidRootPart" then
-                    ev:Disconnect()
-                    ESP:Add(char, {
-                        Name = p.Name,
-                        Player = p,
-                        PrimaryPart = c
-                    })
-                end
-            end)
-        else
-            ESP:Add(char, {
-                Name = p.Name,
-                Player = p,
-                PrimaryPart = char.HumanoidRootPart
-            })
-        end
-    end
-    local function PlayerAdded(p)
-        p.CharacterAdded:Connect(CharAdded)
-        if p.Character then
-            coroutine.wrap(CharAdded)(p.Character)
-        end
-    end
-    plrs.PlayerAdded:Connect(PlayerAdded)
-    for i,v in pairs(plrs:GetPlayers()) do
-        if v ~= plr then
-            PlayerAdded(v)
-        end
-    end
-    
-    game:GetService("RunService").RenderStepped:Connect(function()
-        cam = workspace.CurrentCamera
-        for i,v in (ESP.Enabled and pairs or ipairs)(ESP.Objects) do
-            if v.Update then
-                local s,e = pcall(v.Update, v)
-                if not s then warn("[ERROR]", e, v.Object:GetFullName()) end
-            end
-        end
+       end
     end)
     
-    return ESP 
-    end
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+           if WHeld == true then
+             player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,Speed_1)
+    
+           end
+       end
+    end)
+    
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+       if SHeld == true then
+            player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-Speed_1)
+       end
+       end
+    end)
+    
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+       if AHeld == true then
+       player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(Speed_1,0,0)
+       end
+       end
+    end)
+    
+    
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+       if DHeld == true then
+       player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(-Speed_1,0,0)
+       end
+       end
+    end)
+    
+    
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+       if SpaceHeld == true then
+        player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0,-Speed_1,0)
+       end
+       end
+    end)
+    
+    game:GetService('RunService').Stepped:connect(function()
+       if startup then
+        if ControlHeld == true then
+        player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0,Speed_1,0)
+           end
+       end
+    
+    end)
+    
+    User.InputBegan:Connect(function(inputObject)
+       if(inputObject.KeyCode==Enum.KeyCode.W) then
+           holdingWKey = true WHeld = true
+       end
+       
+       if(inputObject.KeyCode==Enum.KeyCode.S) then
+           holdingSKey = true SHeld = true
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.A) then
+           holdingAKey = true AHeld = true
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.D) then
+           holdingDKey = true DHeld = true
+       end
+       if(inputObject.KeyCode==Enum.KeyCode.LeftControl) then
+           holdingControlKey = true ControlHeld = true
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.Space) then
+           holdingSpaceKey = true SpaceHeld= true
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.W) then
+           holdingUKey = true WHeld = true
+       end
+    end)
+    
+    User.InputEnded:Connect(function(inputObject)
+       if(inputObject.KeyCode==Enum.KeyCode.W) then
+           holdingWKey = false WHeld = false
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.S) then
+           holdingSKey = false SHeld = false    
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.A) then
+           holdingAKey = false AHeld = false    
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.D) then
+           holdingDKey = false DHeld = false    
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.LeftControl) then
+           holdingShiftKey = false ControlHeld = false    
+       end
+    
+       if(inputObject.KeyCode==Enum.KeyCode.Space) then
+           holdingSpaceKey = false SpaceHeld = false
+       end
+    end)
 end
 
-function WorkingESP()
-   --Settings--
-local ESP = {
-    TextColor = Color3.fromRGB(255,255,255),
-    EquippedColor = Color3.fromRGB(255,255,255),
-    DistanceColor = Color3.fromRGB(255,255,255),
-    TracerColor = Color3.fromRGB(255,255,255),
-    LowerHealthColor = Color3.fromRGB(0,0,0),
-    HigherHealthColor = Color3.fromRGB(133, 87, 242),
-    Color = Color3.fromRGB(255,255,255),
-    HealthBar = true,
-    Enabled = true,
-    Distance = true,
-    Health = true,
-    Equipped = true,
-    Boxes = true,
-    BoxShift = CFrame.new(0,-.3,0),
-	BoxSize = Vector3.new(4,8,0),
-    FaceCamera = true,
-    Names = true,
-    TeamColor = true,
-    Thickness = 0.8,
-    AttachShift = 1,
-    TeamMates = true,
-    Players = true,
-    Tracers = false,
-    Objects = setmetatable({}, {__mode="kv"}),
-    Overrides = {},
-    MaxShownDistance = 5000,
- 
-}
- 
---Declarations--
-local cam = workspace.CurrentCamera
-local plrs = game:GetService("Players")
-local plr = plrs.LocalPlayer
-local mouse = plr:GetMouse()
- 
-local V3new = Vector3.new
-local WorldToViewportPoint = cam.WorldToViewportPoint
- 
---Functions--
-local function Draw(obj, props)
-	local new = Drawing.new(obj)
- 
-	props = props or {}
-	for i,v in pairs(props) do
-		new[i] = v
-	end
-	return new
-end
- 
-function ESP:GetTeam(p)
-	local ov = self.Overrides.GetTeam
-	if ov then
-		return ov(p)
-	end
- 
-	return p and p.Team
-end
- 
-function ESP:IsTeamMate(p)
-    local ov = self.Overrides.IsTeamMate
-	if ov then
-		return ov(p)
-    end
- 
-    return self:GetTeam(p) == self:GetTeam(plr)
-end
- 
-function ESP:GetColor(obj)
-	local ov = self.Overrides.GetColor
-	if ov then
-		return ov(obj)
-    end
-    local p = self:GetPlrFromChar(obj)
-	return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
-end
- 
-function ESP:GetPlrFromChar(char)
-	local ov = self.Overrides.GetPlrFromChar
-	if ov then
-		return ov(char)
-	end
- 
-	return plrs:GetPlayerFromCharacter(char)
-end
- 
-function ESP:Toggle(bool)
-    self.Enabled = bool
-    if not bool then
-        for i,v in pairs(self.Objects) do
-            if v.Type == "Box" then --fov circle etc
-                if v.Temporary then
-                    v:Remove()
-                else
-                    for i,v in pairs(v.Components) do
-                        v.Visible = false
-                    end
-                end
-            end
-        end
-    end
-end
- 
-function ESP:GetBox(obj)
-    return self.Objects[obj]
-end
- 
-function ESP:AddObjectListener(parent, options)
-    local function NewListener(c)
-        if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
-            if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
-                if not options.Validator or options.Validator(c) then
-                    local box = ESP:Add(c, {
-                        PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
-                        Color = type(options.Color) == "function" and options.Color(c) or options.Color,
-                        ColorDynamic = options.ColorDynamic,
-                        Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
-                        IsEnabled = options.IsEnabled,
-                        RenderInNil = options.RenderInNil
-                    })
-                    --TODO: add a better way of passing options
-                    if options.OnAdded then
-                        coroutine.wrap(options.OnAdded)(box)
-                    end
-                end
-            end
-        end
-    end
- 
-    if options.Recursive then
-        parent.DescendantAdded:Connect(NewListener)
-        for i,v in pairs(parent:GetDescendants()) do
-            coroutine.wrap(NewListener)(v)
-        end
-    else
-        parent.ChildAdded:Connect(NewListener)
-        for i,v in pairs(parent:GetChildren()) do
-            coroutine.wrap(NewListener)(v)
-        end
-    end
-end
- 
-local boxBase = {}
-boxBase.__index = boxBase
- 
-function boxBase:Remove()
-    ESP.Objects[self.Object] = nil
-    for i,v in pairs(self.Components) do
-        v.Visible = false
-        v:Remove()
-        self.Components[i] = nil
-    end
-end
- 
-function boxBase:Update()
-    if not self.PrimaryPart then
-        --warn("not supposed to print", self.Object)
-        return self:Remove()
-    end
- 
-    local color
-    if ESP.Highlighted == self.Object then
-       color = ESP.HighlightColor
-    else
-        color = self.Color or self.ColorDynamic and self:ColorDynamic() or ESP:GetColor(self.Object) or ESP.Color
-    end
- 
-    local allow = true
-    if ESP.Overrides.UpdateAllow and not ESP.Overrides.UpdateAllow(self) then
-        allow = false
-    end
-    if self.Player and not ESP.TeamMates and ESP:IsTeamMate(self.Player) then
-        allow = false
-    end
-    if self.Player and not ESP.Players then
-        allow = false
-    end
-    if self.IsEnabled and (type(self.IsEnabled) == "string" and not ESP[self.IsEnabled] or type(self.IsEnabled) == "function" and not self:IsEnabled()) then
-        allow = false
-    end
-    if not workspace:IsAncestorOf(self.PrimaryPart) and not self.RenderInNil then
-        allow = false
-    end
- 
-    if not allow then
-        for i,v in pairs(self.Components) do
-            v.Visible = false
-        end
-        return
-    end
- 
-    if ESP.Highlighted == self.Object then
-        color = ESP.HighlightColor
-    end
- 
-    --calculations--
-    local cf = self.PrimaryPart.CFrame
-    if ESP.FaceCamera then
-        cf = CFrame.new(cf.p, cam.CFrame.p)
-    end
-    local size = self.Size
-    local locs = {
-        TopLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,size.Y/2,0),
-        TopRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,size.Y/2,0),
-        BottomLeft = cf * ESP.BoxShift * CFrame.new(size.X/2,-size.Y/2,0),
-        BottomRight = cf * ESP.BoxShift * CFrame.new(-size.X/2,-size.Y/2,0),
-        LegPos = cf* ESP.BoxShift * CFrame.new(size.X/75,-size.Y/2,0),
-        TagPos = cf * ESP.BoxShift * CFrame.new(0,size.Y/2,0),
-        Torso = cf * ESP.BoxShift
-    }
- 
-    local Offset = 20
-    local BottomOffset = 0 
-    local TopLeft, Vis1 = cam:WorldToViewportPoint(locs.TopLeft.p)
-    local TopRight, Vis2 = WorldToViewportPoint(cam, locs.TopRight.p)
-    local BottomLeft, Vis3 = WorldToViewportPoint(cam, locs.BottomLeft.p)
-    local BottomRight, Vis4 = WorldToViewportPoint(cam, locs.BottomRight.p)
-    local LegPos = cam:WorldToViewportPoint(locs.LegPos.p)
-    local Distance = (self.PrimaryPart.Position - plrs.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
- 
-    if ESP.Boxes and game.Players:FindFirstChild(self.PrimaryPart.Parent.Name) ~= nil and Distance <= ESP.MaxShownDistance then
-        if self.Components.Quad then
-            if Vis1 or Vis2 or Vis3 or Vis4 then
-                self.Components.Quad.Visible = true
-                self.Components.Quad.PointA = Vector2.new(TopRight.X, TopRight.Y)
-                self.Components.Quad.PointB = Vector2.new(TopLeft.X, TopLeft.Y)
-                self.Components.Quad.PointC = Vector2.new(BottomLeft.X, BottomLeft.Y)
-                self.Components.Quad.PointD = Vector2.new(BottomRight.X, BottomRight.Y)
-                self.Components.Quad.Color = color
- 
-                self.Components.OutlineQuad.Visible = true
-                self.Components.OutlineQuad.PointA = Vector2.new(TopRight.X, TopRight.Y)
-                self.Components.OutlineQuad.PointB = Vector2.new(TopLeft.X, TopLeft.Y)
-                self.Components.OutlineQuad.PointC = Vector2.new(BottomLeft.X, BottomLeft.Y)
-                self.Components.OutlineQuad.PointD = Vector2.new(BottomRight.X, BottomRight.Y)
-            else
-                self.Components.Quad.Visible = false
-                self.Components.OutlineQuad.Visible = false
-            end
-        end
-    else
-        self.Components.Quad.Visible = false
-        self.Components.OutlineQuad.Visible = false
-    end
- 
-    if ESP.HealthBar and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) then
-        local pos, onscreen = cam:WorldToViewportPoint(self.PrimaryPart.Parent.HumanoidRootPart.Position)
- 
-        if onscreen then
-            local Humanoid = self.PrimaryPart.Parent.Humanoid
- 
-            self.Components.HealthbarOutline.Visible = true 
-            self.Components.HealthbarOutline.From = Vector2.new(BottomLeft.X-6,BottomLeft.Y+1)
-            self.Components.HealthbarOutline.To = Vector2.new(TopLeft.X-6,TopLeft.Y-2)
- 
-            self.Components.Healthbar.Visible = true 
-            self.Components.Healthbar.From = Vector2.new(BottomLeft.X-5 ,BottomLeft.Y)
-            self.Components.Healthbar.Color = ESP.LowerHealthColor:lerp(ESP.HigherHealthColor, Humanoid.Health/Humanoid.MaxHealth)
-            self.Components.Healthbar.To = Vector2.new(TopLeft.X-5,TopLeft.Y-1)
- 
-            else
-                self.Components.Healthbar.Visible = false 
-                self.Components.HealthbarOutline.Visible = false 
- 
-        end
-        else
-            self.Components.Healthbar.Visible = false 
-            self.Components.HealthbarOutline.Visible = false 
-    end
- 
-	if ESP.Equipped  and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(self.PrimaryPart.Parent.Name) ~= nil then 
-        local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-        local Char = self.PrimaryPart.Parent
- 
-        if Vis5 then
-            self.Components.EquippedTool.Color = ESP.EquippedColor
-            self.Components.EquippedTool.Visible = true
-            self.Components.EquippedTool.Position = Vector2.new(LegPos.X,LegPos.Y + BottomOffset)
-            if Char:FindFirstChildOfClass("Tool") then 
-                self.Components.EquippedTool.Text = tostring(Char:FindFirstChildOfClass("Tool"))
-                 BottomOffset = BottomOffset + 14
-                else
-                    self.Components.EquippedTool.Text = ""
-            end
-        else
-            self.Components.EquippedTool.Visible = false
-        end
-    else
-        self.Components.EquippedTool.Visible = false
-    end
- 
-    if ESP.Distance  and Distance <= ESP.MaxShownDistance then 
-            local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
- 
-            if Vis5 then
-                self.Components.Distance.Visible = true
-                if plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) ~= nil  then 
-                    self.Components.Distance.Position = Vector2.new(LegPos.X, LegPos.Y + BottomOffset)
-                    BottomOffset = BottomOffset + 14
-                elseif  plrs:FindFirstChild(tostring(self.PrimaryPart.Parent)) == nil then 
-                    self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y - Offset)
-                    Offset = Offset + 14
-                end
-                self.Components.Distance.Text = math.floor((cam.CFrame.p - cf.p).magnitude) .." studs"
-                self.Components.Distance.Color = ESP.DistanceColor
-            else
-                self.Components.Distance.Visible = false
-            end
-        else
-            self.Components.Distance.Visible = false
-    end
- 
-    if ESP.Names  and Distance <= ESP.MaxShownDistance then
-        local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
- 
-        if Vis5 then
-            self.Components.Name.Visible = true
-            self.Components.Name.Position = Vector2.new(TagPos.X,TagPos.Y - Offset)
-            self.Components.Name.Text = self.Name
-            self.Components.Name.Color = ESP.TextColor
-            Offset = Offset+10
-        else
-            self.Components.Name.Visible = false
-        end
-    else
-        self.Components.Name.Visible = false
-    end
- 
-    if ESP.Tracers and Distance <= ESP.MaxShownDistance and plrs:FindFirstChild(tostring(self.PrimaryPart.Parent))  then
-        local TorsoPos, Vis6 = WorldToViewportPoint(cam, locs.Torso.p)
- 
-        if Vis6 then
-            self.Components.Tracer.Visible = true
-            self.Components.Tracer.From = Vector2.new(TorsoPos.X,TorsoPos.Y)
-            self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2,cam.ViewportSize.Y/ESP.AttachShift)
-            self.Components.Tracer.Color = ESP.TracerColor
-        else
-            self.Components.Tracer.Visible = false
-        end
-    else
-        self.Components.Tracer.Visible = false
-    end
-end
- 
-function ESP:Add(obj, options)
-    if not obj.Parent and not options.RenderInNil then
-        return warn(obj, "has no parent")
-    end
- 
-    local box = setmetatable({
-        Name = options.Name or obj.Name,
-        Type = "Box",
-        Color = options.Color,--[[or self:GetColor(obj)]]
-        Size = options.Size or self.BoxSize,
-        Object = obj,
-        Player = options.Player or plrs:GetPlayerFromCharacter(obj),
-        PrimaryPart = options.PrimaryPart or obj.ClassName == "Model" and (obj.PrimaryPart or obj:FindFirstChild("HumanoidRootPart") or obj:FindFirstChildWhichIsA("BasePart")) or obj:IsA("BasePart") and obj,
-        Components = {},
-        IsEnabled = options.IsEnabled,
-        Temporary = options.Temporary,
-        ColorDynamic = options.ColorDynamic,
-        RenderInNil = options.RenderInNil
-    }, boxBase)
- 
-    if self:GetBox(obj) then
-        self:GetBox(obj):Remove()
-    end
- 
- 
-    box.Components["OutlineQuad"] = Draw("Quad", {
-        Thickness = self.Thickness + 2,
-        Color = Color3.fromRGB(0,0,0),
-        Transparency = 1,
-        Filled = false,
-        Visible = self.Enabled and self.Boxes
-    })
- 
-    box.Components["Quad"] = Draw("Quad", {
-        Thickness = self.Thickness,
-        Color = color,
-        Transparency = 1,
-        Filled = false,
-        Visible = self.Enabled and self.Boxes
-    })
-    box.Components["Name"] = Draw("Text", {
-		Text = box.Name,
-		Color = ESP.TextColor,
-		Center = true,
-		Outline = true,
-        Size = 14,
-        Visible = self.Enabled and self.Names
-	})
-	box.Components["Distance"] = Draw("Text", {
-		Color = ESP.DistanceColor,
-		Center = true,
-		Outline = true,
-        Size = 14,
-        Visible = self.Enabled and self.Distance
-	})
- 
-	box.Components["EquippedTool"] = Draw("Text", {
-		Color = ESP.EquippedColor,
-		Center = true,
-		Outline = true,
-        Size = 14,
-        Visible = self.Enabled and self.Equipped
-	})
- 
- 
-	box.Components["Tracer"] = Draw("Line", {
-		Thickness = ESP.Thickness,
-		Color = box.Color,
-        Transparency = 1,
-        Visible = self.Enabled and self.Tracers
-    })
- 
-    box.Components["HealthbarOutline"] = Draw('Line',{
-        Thickness = 3 ,
-        Color = Color3.new(0,0,0),
-        Transparency = 1,
-        Visible = self.Enabled and self.HealthBar,
-    })
- 
-    box.Components["Healthbar"] = Draw('Line',{
-        Thickness = 3,
-        Color = Color3.new(0,1,0),
-        Transparency = 1,
-        Visible = self.Enabled and self.HealthBar,
-    })
-    self.Objects[obj] = box
- 
-    obj.AncestryChanged:Connect(function(_, parent)
-        if parent == nil and ESP.AutoRemove ~= false then
-            box:Remove()
-        end
-    end)
-    obj:GetPropertyChangedSignal("Parent"):Connect(function()
-        if obj.Parent == nil and ESP.AutoRemove ~= false then
-            box:Remove()
-        end
-    end)
- 
-    local hum = obj:FindFirstChildOfClass("Humanoid")
-	if hum then
-        hum.Died:Connect(function()
-            if ESP.AutoRemove ~= false then
-                box:Remove()
-            end
-		end)
-    end
- 
-    return box
-end
- 
-local function CharAdded(char)
-    local p = plrs:GetPlayerFromCharacter(char)
-    if not char:FindFirstChild("HumanoidRootPart") then
-        local ev
-        ev = char.ChildAdded:Connect(function(c)
-            if c.Name == "HumanoidRootPart" then
-                ev:Disconnect()
-                ESP:Add(char, {
-                    Name = p.Name,
-                    Player = p,
-                    PrimaryPart = c
-                })
-            end
-        end)
-    else
-        ESP:Add(char, {
-            Name = p.Name,
-            Player = p,
-            PrimaryPart = char.HumanoidRootPart
-        })
-    end
-end
-local function PlayerAdded(p)
-    p.CharacterAdded:Connect(CharAdded)
-    if p.Character then
-        coroutine.wrap(CharAdded)(p.Character)
-    end
-end
-plrs.PlayerAdded:Connect(PlayerAdded)
-for i,v in pairs(plrs:GetPlayers()) do
-    if v ~= plr then
-        PlayerAdded(v)
-    end
-end
- 
-game:GetService("RunService").RenderStepped:Connect(function()
-    cam = workspace.CurrentCamera
-    for i,v in (ESP.Enabled and pairs or ipairs)(ESP.Objects) do
-        if v.Update then
-            local s,e = pcall(v.Update, v)
-            if not s then warn("[ERROR]", e, v.Object:GetFullName()) end
-        end
-    end
+
+
+
+
+
+function Bypass()
+local humanoid = game:GetService("Players").LocalPlayer.Character.Humanoid
+local check
+check = hookmetamethod(game,"__index",function(t, k)
+   if t == humanoid  and k == "WalkSpeed" then
+       return 16
+   end
+   return check(t,k)
 end)
- 
-return ESP
+
+if pebc_execute then
+    getgenv().hookfunction = function(...)
+        detour_function(...)
+    end
+end
+newclosure = newcclosure or protect_function
+sro = setreadonly or make_writeable
+mt = getrawmetatable(game)
+sro(mt,false)
+old = mt.__newindex
+mt.__newindex = newclosure(function(a,b,c)
+    if b:lower() == "walkspeed" and c < 30 then
+        return 
+    end
+    return old(a,b,c)
+end)
+
+local humanoid = game:GetService("Players").LocalPlayer.Character.Humanoid
+local check
+check = hookmetamethod(game,"__index",function(t, k)
+   if t == humanoid  and k == "JumpPower" then
+       return 50
+   end
+   return check(t,k)
+end)
 end
 
 
@@ -1097,204 +206,126 @@ end
 
 
 
+local WalkSpeed = 16
+local JumpPower = 50
+_G.Speed = 50
 
+local plr = game.Players.LocalPlayer.Character
 
+getgenv().SecureMode = true
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local Bypass = Bypass()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local oldgrav = game.Workspace.Gravity
-
-getgenv().Multiplier = 0.23
-shared.power = 50
-
-
-
-local Atlas = loadstring(game:HttpGet("https://rd2glory.com/Atlas.lua"))()
-local functions = functions()
-
-local UI = Atlas.new({
-    Name = "Kraken Services";
-    Credit = "Made By Efial#6847 & Myung#9499";
-    Color = Color3.fromRGB(94, 154, 150);
-    Bind = "RightControl";
-})
-
-UI:Notify({
-    Title = "Kraken Services";
-    Content = "Loaded.";
-  })
-
-local MyPage = UI:CreatePage("Main")
-
-local Speed = MyPage:CreateSection("Speed")
-
-Speed:CreateButton({
-    Name = "Speed Hack (T)"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        if getgenv().Loaded == true then
-            UI:Notify({
-                Title = "Kraken Services";
-                Content = "Already Loaded Speed.";
-              })
-            return
-        end
-        CFRAME()
-        getgenv().Loaded = true
-    end
-})
-
-Speed:CreateSlider({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "Speed Hack Speed"; -- required: name of element
-    Flag = "Speed Hack Speed"; -- required: unique flag name to use
-    Min = 0; -- required: slider minimum drag
-    Max = 0.5; -- required: slider maximum drag (Max>Min or else script will error)
-    Digits = 3; -- optional: digits for rounding when dragging or entering values, default is 0 (whole numbers)
-    Default = 0.23; -- optional: default value for slider, will be used if config saving is disabled and there is no saved data, will be the Min value if left nil
-    Callback = function(value) -- optional: function that will be called whenever slider flag is changed
-        getgenv().Multiplier = value
-    end;
+local Window = Rayfield:CreateWindow({
+	Name = "Kraken Services",
+	LoadingTitle = "Kraken Services Loading...",
+	LoadingSubtitle = "By Efial#6847",
+	ConfigurationSaving = {
+		Enabled = false,
+		FolderName = nil, -- Create a custom folder for your hub/game
+		FileName = "Big Hub"
+	},
+        Discord = {
+        	Enabled = false,
+        	Invite = "", -- The Discord invite code, do not include discord.gg/
+        	RememberJoins = false -- Set this to false to make them join the discord every time they load it up
+        },
+	KeySystem = false, -- Set this to true to use our key system
+	KeySettings = {
+		Title = "Sirius Hub",
+		Subtitle = "Key System",
+		Note = "Join the discord (discord.gg/sirius)",
+		FileName = "SiriusKey",
+		SaveKey = true,
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = "Hello"
+	}
 })
 
 
-local Misc = MyPage:CreateSection("Misc")
+local Tab = Window:CreateTab("Main", 4483362458) -- Title, Image
 
-Misc:CreateButton({
-    Name = "God (Can't Turn Off And Cant Hit)"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        altHumanoid=game:GetService("Players").LocalPlayer.Character.Humanoid:Clone()altHumanoid.Parent=nil;standardHumanoid=game:GetService("Players").LocalPlayer.Character.Humanoid;standardHumanoid.Name="x"altHumanoid.Parent=game:GetService("Players").LocalPlayer.Character;altHumanoid.Name="Humanoid"wait(0.1)standardHumanoid.Parent=nil;game.Workspace.CurrentCamera.CameraSubject=game:GetService("Players").LocalPlayer.Character;game:GetService("Players").LocalPlayer.Character.Animate.Disabled=true;wait(0.1)game:GetService("Players").LocalPlayer.Character.Animate.Disabled=false;altHumanoid.DisplayDistanceType="None"wait(0.1)altHumanoid.Name="x"standardHumanoid.Parent=game:GetService("Players").LocalPlayer.Character;standardHumanoid.Name="Humanoid"wait(0.1)altHumanoid.Parent=nil;game.Workspace.CurrentCamera.CameraSubject=game:GetService("Players").LocalPlayer.Character;game:GetService("Players").LocalPlayer.Character.Animate.Disabled=true;wait(0.1)game:GetService("Players").LocalPlayer.Character.Animate.Disabled=false;standardHumanoid.DisplayDistanceType="None"
-        Clone.MaxHealth = math.huge
-        Clone.Health = math.huge
-        game.Players.LocalPlayer:WaitForChild("PlayerGui").HUD.Health.HealthBar.TextLabel.Text = "INF / INF"
-        game.Players.LocalPlayer:WaitForChild("PlayerGui").HUD.Health.HealthBar.TextLabel.shadow.Text = "INF / INF"
-        game.Players.LocalPlayer.Character.Animate.Disabled = true
-    end
-})
+local Section = Tab:CreateSection("WalkSpeed")
 
-Misc:CreateToggle({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "Low Gravity "; -- required: name of element
-    Flag = "Low Gravity"; -- required: unique flag name to use
-    Default = false; -- optional: default value for toggle, will be used if config saving is disabled and there is no saved data, will be false if left nil
-    Callback = function(state) -- optional: function that will be called when toggled, it is reccomended to modify flags directly
-        if state == true then
-            game.Workspace.Gravity = 40
-        elseif state == false then
-            game.Workspace.Gravity = oldgrav
-        end
-    end;
-    Warning = "Could Kill You"; -- optional: this argument is used in all elements (except for Body) and will indicate text that will appear when the player hovers over the warning icon
-    WarningIcon = 11110093949; -- optional: ImageAssetId for warning icon, will only be used if Warning is not nil, default is yellow warning icon.
-})
-
-Misc:CreateToggle({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "Float "; -- required: name of element
-    Flag = ""; -- required: unique flag name to use
-    Default = false; -- optional: default value for toggle, will be used if config saving is disabled and there is no saved data, will be false if left nil
-    Callback = function(state) -- optional: function that will be called when toggled, it is reccomended to modify flags directly
-        if state == true then
-            game.Players.LocalPlayer.Character.Humanoid.HipHeight = 12
-        elseif state == false then
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame* CFrame.new(0,5,0)
-            game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2.0750002861023
-        end
-    end;
-    Warning = "Could Kill You"; -- optional: this argument is used in all elements (except for Body) and will indicate text that will appear when the player hovers over the warning icon
-    WarningIcon = 11110093949; -- optional: ImageAssetId for warning icon, will only be used if Warning is not nil, default is yellow warning icon.
-})
-
-local NoClip = MyPage:CreateSection("NoClip")
-
-NoClip:CreateToggle({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "NoClip "; -- required: name of element
-    Flag = "Fly Jump"; -- required: unique flag name to use
-    Default = false; -- optional: default value for toggle, will be used if config saving is disabled and there is no saved data, will be false if left nil
-    Callback = function(state) -- optional: function that will be called when toggled, it is reccomended to modify flags directly
-        if state == true then
-            for _, child in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                if child:IsA("BasePart") and child.CanCollide == true then
-                    child.CanCollide = false
-                end
+local Toggle = Tab:CreateToggle({
+	Name = "Toggle WalkSpeed",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+            while Value == true do
+                plr:WaitForChild("Humanoid").WalkSpeed = WalkSpeed
+                task.wait()
             end
-        elseif state == false then
-            for _, child in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                if child:IsA("BasePart") and child.CanCollide == true then
-                    child.CanCollide = true
-                end
+        elseif Value == false then
+            while Value == false do
+                plr:WaitForChild("Humanoid").WalkSpeed = 16
+                task.wait()
             end
         end
-    end;
-    Warning = "Could Kill You"; -- optional: this argument is used in all elements (except for Body) and will indicate text that will appear when the player hovers over the warning icon
-    WarningIcon = 11110093949; -- optional: ImageAssetId for warning icon, will only be used if Warning is not nil, default is yellow warning icon.
+	end,
 })
 
-
-local ESP = MyPage:CreateSection("ESP")
-
-ESP:CreateButton({
-    Name = "ESP"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        if getgenv().Loaded22 == true then
-            UI:Notify({
-                Title = "Kraken Services";
-                Content = "Already Loaded Speed.";
-              })
-            return
+local Slider = Tab:CreateSlider({
+	Name = "Walk Speed",
+	Range = {16, 80},
+	Increment = 0.1,
+	Suffix = "WalkSpeed",
+	CurrentValue = 16,
+	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        while true do
+		    WalkSpeed = Value
+            task.wait()
         end
-        WorkingESP()
-        getgenv().Loaded22 = true
-    end
+	end,
 })
 
 
+local Section = Tab:CreateSection("Jump Power")
 
-local MyPage2 = UI:CreatePage("Chest ESP")
-
-local Chest = MyPage2:CreateSection("Chests")
-
-Chest:CreateButton({
-    Name = "Rare Chest ESP"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
-            if v.Name == "Rare" then
-              local a = Instance.new("BillboardGui",v) -- pretty much explains everything
-              a.Name = "ElectricPPPGUI"
-              a.Size = UDim2.new(10,0, 10,0)
-              a.AlwaysOnTop = true
-              local b = Instance.new("Frame",a)
-              b.Size = UDim2.new(1,0, 1,0)
-              b.BackgroundTransparency = 1
-              b.BorderSizePixel = 0
-              b.BackgroundColor3 = Color3.new(0, 255, 0)
-              local c = Instance.new('TextLabel',b)
-              c.Size = UDim2.new(2,0,2,0)
-              c.BorderSizePixel = 0
-              c.TextSize = 10
-              c.TextColor3 = Color3.fromRGB(255,255,255)
-              c.Text = "Rare Chest"
-              c.BackgroundTransparency = 1
-              c.Font = "Ubuntu"
-              local d = Instance.new("Highlight", v)
-              d.FillColor = Color3.fromRGB(0, 125, 198)
-              d.OutlineColor = Color3.fromRGB(0, 162, 255)
-            end
+local Toggle = Tab:CreateToggle({
+	Name = "Toggle JumpPower",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        if Value == true then
+            Jump = game:GetService"RunService".Stepped:Connect(function() 
+                plr:WaitForChild("Humanoid").JumpPower = JumpPower
+            end)
+        elseif Value == false then
+            Jump:Disconnect()
         end
-    end
+	end,
 })
 
-Chest:CreateButton({
-    Name = "Legendary Chest ESP"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
+local Slider = Tab:CreateSlider({
+	Name = "Jump Power",
+	Range = {50, 90},
+	Increment = 0.1,
+	Suffix = "JumpPower",
+	CurrentValue = 50,
+	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        while true do
+		    JumpPower = Value
+            task.wait()
+        end
+	end,
+})
+
+
+
+local Tab2 = Window:CreateTab("ESP", 4483362458) -- Title, Image
+
+local Section = Tab2:CreateSection("Chest ESP")
+
+local Toggle = Tab2:CreateToggle({
+	Name = "Legendary Chest ESP",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+       if Value == true then
         for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
             if v.Name == "Legendary" then
               local a = Instance.new("BillboardGui",v) -- pretty much explains everything
@@ -1319,126 +350,125 @@ Chest:CreateButton({
               d.OutlineColor = Color3.fromRGB(255, 255, 0)
             end
         end
-    end
+       elseif Value == false then
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Legendary.ElectricPPPGUI:Remove()
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Legendary.Highlight:Remove()
+       end
+	end,
 })
 
-Chest:CreateToggle({ -- IMPORTANT: This function does not return anything, please modify flags directly in order to read or update toggle values. SCROLL TO BOTTOM OF PAGE TO SEE HOW TO MODIFY FLAGS
-    Name = "Common Chest"; -- required: name of element
-    Flag = "Common"; -- required: unique flag name to use
-    Default = false; -- optional: default value for toggle, will be used if config saving is disabled and there is no saved data, will be false if left nil
-    Callback = function(state) -- optional: function that will be called when toggled, it is reccomended to modify flags directly
-        if state == true then
-            Common()
-        elseif state == false then
-            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Common.ElectricPPPGUI:Remove()
-            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Common.Highlight:Remove()
+local Toggle = Tab2:CreateToggle({
+	Name = "Rare Chest ESP",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+       if Value == true then
+        for __,v in pairs(game.Players.LocalPlayer.PlayerScripts.Shop.Chests:GetDescendants()) do -- the path
+            if v.Name == "Rare" then
+              local a = Instance.new("BillboardGui",v) -- pretty much explains everything
+              a.Name = "ElectricPPPGUI"
+              a.Size = UDim2.new(10,0, 10,0)
+              a.AlwaysOnTop = true
+              local b = Instance.new("Frame",a)
+              b.Size = UDim2.new(1,0, 1,0)
+              b.BackgroundTransparency = 1
+              b.BorderSizePixel = 0
+              b.BackgroundColor3 = Color3.new(0, 255, 0)
+              local c = Instance.new('TextLabel',b)
+              c.Size = UDim2.new(2,0,2,0)
+              c.BorderSizePixel = 0
+              c.TextSize = 10
+              c.TextColor3 = Color3.fromRGB(255,255,255)
+              c.Text = "Rare Chest"
+              c.BackgroundTransparency = 1
+              c.Font = "Ubuntu"
+              local d = Instance.new("Highlight", v)
+              d.FillColor = Color3.fromRGB(0, 125, 198)
+              d.OutlineColor = Color3.fromRGB(0, 162, 255)
+            end
         end
-    end;
+       elseif Value == false then
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Rare.ElectricPPPGUI:Remove()
+            game.Players.LocalPlayer.PlayerScripts.Shop.Chests.Rare.Highlight:Remove()
+       end
+	end,
 })
 
 
 
-local MyPage3 = UI:CreatePage("Misc-Stuff")
 
-local Misc = MyPage3:CreateSection("Misc")
+local Tab3 = Window:CreateTab("Misc", 4483362458) -- Title, Image
 
-Misc:CreateButton({
-    Name = "No Stun"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-       while true do
-        if game.Players.LocalPlayer.Character:WaitForChild("Stun") then
-            game.Players.LocalPlayer.Character.Stun:Remove()
-            wait(.1)
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2, 10)
+local Section = Tab3:CreateSection("Misc ( DONT LOAD ANYTHING IN HERE WHILE IN LOBBY WAIT TILL LANDED )")
+
+local Toggle = Tab3:CreateToggle({
+	Name = "No Stun",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        if Value == true then
+            NoStun = game:GetService"RunService".Stepped:Connect(function() 
+                if game.Players.LocalPlayer.Character:WaitForChild("Stun") then
+                    game.Players.LocalPlayer.Character.Stun:Remove()
+                    wait(.1)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2, 10)
+                end
+            end)
+        elseif Value == false then
+            NoStun:Disconnect()
         end
-    end
-    end
+	end,
 })
 
-Misc:CreateButton({
-    Name = "No Drown"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        game:GetService "RunService".RenderStepped:Connect(
-            function()
+local Toggle = Tab3:CreateToggle({
+	Name = "No Drown",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+        if Value == true then
+            NoDrown = game:GetService"RunService".Stepped:Connect(function() 
                 if game.Players.LocalPlayer.Character.HumanoidRootPart:WaitForChild("SwimPosition") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.SwimPosition.Position = Vector3.new(0, -2.71834, 0)
                 end
-            end
-        )
-    end
-})   
-
-Misc:CreateButton({
-    Name = "No Fall Damage"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        if game.Players.LocalPlayer.Character:WaitForChild("FallDamage")then game.Players.LocalPlayer.Character.FallDamage:Remove()end -- No Fall Damage
-    end
+            end)
+        elseif Value == false then
+            NoDrown:Disconnect()
+        end
+	end,
 })
 
-Misc:CreateButton({
-    Name = "Hitbox Expander"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        local a=getrenv()._G.hitbox.start;getrenv()._G.hitbox.start=function(...)local b={...}b[3]=Vector3.new(30,30,30)return a(unpack(b))end -- Hitbox
-    end
-})   
-
-Misc:CreateButton({
-    Name = "Dash No Stamina"; -- required: name of element
-    Callback = function() -- required: function to be called when button is pressed
-        local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="takestam"then return nil end;return a(...)end) -- Stamina
-    end
+local Button = Tab3:CreateButton({
+	Name = "No Fall Damage",
+	Callback = function()
+		if game.Players.LocalPlayer.Character:WaitForChild("FallDamage")then game.Players.LocalPlayer.Character.FallDamage:Remove()end -- No Fall Damage
+	end,
 })
 
+local Button = Tab3:CreateButton({
+	Name = "Hitbox Extender",
+	Callback = function()
+		local a=getrenv()._G.hitbox.start;getrenv()._G.hitbox.start=function(...)local b={...}b[3]=Vector3.new(30,30,30)return a(unpack(b))end -- Hitbox
+	end,
+})
 
+local Button = Tab3:CreateButton({
+	Name = "Dash No Stamina",
+	Callback = function()
+		local a;a=hookmetamethod(game,"__namecall",function(...)local b=...if tostring(b)=="takestam"then return nil end;return a(...)end) -- Stamina
+	end,
+})
 
+local Section = Tab3:CreateSection("God Mode")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-lol = getcustomasset or getsynasset
-writefile("Cheddqa.mp3", game:HttpGet("https://krakenservices.s-ul.eu/VkFcIjQp"))
-
-local sound = Instance.new("Sound")
-sound.SoundId = lol("Cheddqa.mp3")
-sound.Volume = 20
-sound.Looped = false
-sound.Parent = workspace
-sound:Play()
-wait(6)
-sound:Remove()
+local Button = Tab3:CreateButton({
+	Name = "God Mode (Can't Turn Off Or Hit)",
+	Callback = function()
+        altHumanoid=game:GetService("Players").LocalPlayer.Character.Humanoid:Clone()altHumanoid.Parent=nil;standardHumanoid=game:GetService("Players").LocalPlayer.Character.Humanoid;standardHumanoid.Name="x"altHumanoid.Parent=game:GetService("Players").LocalPlayer.Character;altHumanoid.Name="Humanoid"wait(0.1)standardHumanoid.Parent=nil;game.Workspace.CurrentCamera.CameraSubject=game:GetService("Players").LocalPlayer.Character;game:GetService("Players").LocalPlayer.Character.Animate.Disabled=true;wait(0.1)game:GetService("Players").LocalPlayer.Character.Animate.Disabled=false;altHumanoid.DisplayDistanceType="None"wait(0.1)altHumanoid.Name="x"standardHumanoid.Parent=game:GetService("Players").LocalPlayer.Character;standardHumanoid.Name="Humanoid"wait(0.1)altHumanoid.Parent=nil;game.Workspace.CurrentCamera.CameraSubject=game:GetService("Players").LocalPlayer.Character;game:GetService("Players").LocalPlayer.Character.Animate.Disabled=true;wait(0.1)game:GetService("Players").LocalPlayer.Character.Animate.Disabled=false;standardHumanoid.DisplayDistanceType="None"
+        Clone.MaxHealth = math.huge
+        Clone.Health = math.huge
+        game.Players.LocalPlayer:WaitForChild("PlayerGui").HUD.Health.HealthBar.TextLabel.Text = "INF / INF"
+        game.Players.LocalPlayer:WaitForChild("PlayerGui").HUD.Health.HealthBar.TextLabel.shadow.Text = "INF / INF"
+        game.Players.LocalPlayer.Character.Animate.Disabled = true
+	end,
+})
